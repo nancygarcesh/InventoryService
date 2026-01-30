@@ -26,28 +26,42 @@ namespace InventoryService.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var item = await _service.GetItemByIdAsync(id);
-            return item != null ? Ok(item) : NotFound();
+            if (item == null)
+                return NotFound(new { Message = $"Item con Id {id} no encontrado" });
+            return Ok(item);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(InventoryItem item)
+        public async Task<IActionResult> Create([FromBody] InventoryItem item)
         {
-            await _service.AddItemAsync(item);
-            return CreatedAtAction(nameof(Get), new { id = item.Id }, item);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var created = await _service.AddItemAsync(item);
+            return CreatedAtAction(nameof(Get), new { id = created.Id }, created);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, InventoryItem item)
+        public async Task<IActionResult> Update(int id, [FromBody] InventoryItem item)
         {
-            if (id != item.Id) return BadRequest();
-            await _service.UpdateItemAsync(item);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (id != item.Id)
+                return BadRequest(new { Message = "El ID en la URL no coincide con el ID del objeto" });
+
+            var updated = await _service.UpdateItemAsync(id, item);
+            if (!updated)
+                return NotFound(new { Message = $"No se pudo actualizar: Item con ID {id} no encontrado o modificado por otro usuario" });
+
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _service.DeleteItemAsync(id);
+            var deleted = await _service.DeleteItemAsync(id);
+            if (!deleted)
+                return NotFound(new { Message = $"Item con ID {id} no encontrado" });
             return NoContent();
         }
     }
