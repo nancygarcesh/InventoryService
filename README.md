@@ -24,7 +24,7 @@ Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre item
 ```bash
 Descargar o clonar este repositorio
 cd InventoryService/InventoryService
-
+```
 
 2. Instalar paquetes
 
@@ -34,24 +34,28 @@ dotnet add package Microsoft.EntityFrameworkCore
 dotnet add package Microsoft.EntityFrameworkCore.Tools
 dotnet add package Pomelo.EntityFrameworkCore.MySql
 dotnet add package Swashbuckle.AspNetCore
+```
 
 3. Crear la base de datos y aplicar migraciones
 
 ```bash
 dotnet ef migrations add InitialCreate
 dotnet ef database update
-
+```
 
 Ejecutar
 ```bash
 dotnet run
+```
 
 El servicio estará disponible en:
-
+```bash
 HTTPS: https://localhost:7234
 
 HTTP: http://localhost:5101
-
+```
 Para probar:
+```bash
 https://localhost:7234/swagger
 http://localhost:5101/swagger
+```
